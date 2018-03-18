@@ -20,12 +20,15 @@ data = requests.get("http://www.wylsa.com").text
 
 soup = BeautifulSoup(data, "lxml")
 
-
 for title in soup.find_all(itemprop='headline'):
     print(title.get_text(), title.parent.get('href'))
 
 
 
+@app.route('/')
+def home():
+    
+    return 'OK'
 
 
 
@@ -34,4 +37,4 @@ if __name__ =='__main__':
     app.config['SESSION_TYPE'] = 'filesystem'
 
     app.debug = True
-    app.run(port=5003)
+    app.run(host='0.0.0.0', port=8000)
