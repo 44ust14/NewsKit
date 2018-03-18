@@ -1,19 +1,47 @@
-# newschatbot
+# NewsKit
+
+Bot for getting the most relevant news content
+
+## Getting Started
+
+To launch this application with Docker:
+
 1) Install doker --> https://docs.docker.com/install/#supported-platforms
 2) Install doker-compose --> https://docs.docker.com/compose/install/
-3) Git clone repo from Git Hub
-4) cd newskit
 
--- Launch via docker-compose --
+### Prerequisites
 
-5) sudo docker-compose up
+3) Clone this repository and go to root folder
+
+```
+git clone https://github.com/emloft/NewsKit.git
+cd newskit
+```
+
+## Launch via docker-compose
+
+```
+sudo docker-compose up
+```
+
+## Direct launch via Dockerfile (not recommended)
+
+```
+docker build -t python ./
+```
+And then run:
+```
+sudo docker run -p 8000:8000 -v `pwd`:/newskit --rm -it python python app.py
+```
+
+## Authors
+
+We are open to new opportunities so feel free to get in touch with us!
+
+* [Dmytro Lopushanskyy](https://www.facebook.com/profile.php?id=100007359646680) - Front-End & Back-End Developer
+* [Mark Lastovski](https://www.facebook.com/mlastovski) - Game-Dev & Back-End Developer
 
 
--- Launch via Dockerfile напряму (not recommended) --
-
-5) docker build -t python ./
-6) sudo docker run -p 8000:8000 -v `pwd`:/newskit --rm -it python python app.py
 
 
 
-To pull docker repository(image) from Docker Hub --> docker pull dmytrolopushanskyy/newskit::firstpush
