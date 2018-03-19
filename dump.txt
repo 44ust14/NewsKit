@@ -1,0 +1,30 @@
+CREATE TABLE websites (
+id SERIAL NOT NULL PRIMARY KEY,
+url TEXT  NOT NULL,
+names TEXT NOT NULL
+);
+INSERT INTO websites VALUES(1,'https://wylsa.com/', 'wylsa, wylsacom, вилса, вилсаком, вілса, вілсаком');
+
+CREATE TABLE users (
+id SERIAL NOT NULL PRIMARY KEY,
+telegram_id INTEGER NOT NULL,
+name TEXT NOT NULL,
+keywords TEXT,
+send_time TEXT
+);
+
+CREATE TABLE connection (
+id SERIAL NOT NULL PRIMARY KEY,
+website_id INTEGER NOT NULL,
+user_id INTEGER NOT NULL,
+status TEXT,
+keywords TEXT
+);
+CREATE TABLE articles (
+id SERIAL NOT NULL PRIMARY KEY,
+website_id INTEGER NOT NULL,
+url TEXT,
+article_date TEXT,
+keywords TEXT,
+parse_time TEXT
+);
