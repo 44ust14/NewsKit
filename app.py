@@ -100,10 +100,11 @@ def two_four_tvua():
             curs.execute("INSERT INTO articles (website_id, url, article_date, keywords, parse_time)  VALUES ('{}','{}', '{}','{}', '{}')".format('2', new_article['link'], new_article['date'], '', datetime.now()))
             conn.commit()
 
-            requests.get('https://api.telegram.org/bot582815834:AAFkPhSrT-yfSq0Vi6dI8bMTFXovoVWT0Ok/sendMessage?chat_id=138918380&text={}'.format(new_article['link']))
-            requests.get('https://api.telegram.org/bot582815834:AAFkPhSrT-yfSq0Vi6dI8bMTFXovoVWT0Ok/sendMessage?chat_id=373407132&text={}'.format(new_article['link']))
-            requests.get('https://api.telegram.org/bot582815834:AAFkPhSrT-yfSq0Vi6dI8bMTFXovoVWT0Ok/sendMessage?chat_id=550701385&text={}'.format(new_article['link']))
+            curs.execute("SELECT telegram_id FROM users")
+            users = list(curs.fetchone())
 
+            for i in users:
+                requests.get('https://api.telegram.org/bot582815834:AAFkPhSrT-yfSq0Vi6dI8bMTFXovoVWT0Ok/sendMessage?chat_id={}&text={}'.format(i, new_article['link']))
 
 
 

@@ -47,13 +47,15 @@ def get_last_update_id(updates):
 def echo_all(updates):
     for update in updates["result"]:
         text = update["message"]["text"]
+        text = text.lower()
+
         chat = update["message"]["chat"]["id"]
 
         id = update['message']['chat']['id']
         name =  update['message']['chat']['first_name']
 
         if text == '/start':
-            text = 'Тебе вітає Newkit! Повідом мені свої ключові слова таким чином: \nКлючові слова: слово1, слово2, слово3 і тд \n або \n/keywords слово1, слово2, слово3'
+            text = 'Тебе вітає NewsKit! Повідом мені свої ключові слова таким чином: \nКлючові слова: слово1, слово2, слово3 і тд \n або \n/keywords слово1, слово2, слово3'
             send_message(text, chat)
 
             text = str([update['message']['chat']['id'], update['message']['chat']['first_name']])
@@ -66,19 +68,102 @@ def echo_all(updates):
                 conn.commit()
             send_message('Етап реєстрації успішно пройдений. Ваші дані:', chat)
             send_message(text, chat)
-        elif text.startswith('/keywords'):
+        elif text.startswith('/keywords') or text.startswith('ключові слова:'):
+            if text.startswith('ключові слова:'):
+                text = text.split(' ')
+                text.pop(0)
+                text.pop(0)
+            else:
+                text = text.split(' ')
+                text.pop(0)
             curs = conn.cursor()
             curs.execute("SELECT keywords FROM users WHERE telegram_id ='{}' AND name ='{}'".format(id, name))
             present_words = curs.fetchone()[0]
-            text = text.split(' ')
-            text.pop(0)
-            text = ' '.join(text)
-            curs.execute("UPDATE users SET keywords ='{}' WHERE telegram_id ='{}' AND name ='{}'".format(str(present_words + ', ' + text), id, name))
+            present_words_list = present_words.split(', ')
+            present_words_list = remove_bad_characters(present_words_list)
+
+            text = remove_bad_characters(text)
+            #text consists of received list of new keywords
+
+            # loop for detecting repeating keywords
+            isgoingtoberemoved = []
+            for word in text:
+                if word in present_words_list:
+                    send_message(str(word + ' не додано через повтор'), chat)
+                    isgoingtoberemoved.append(word)
+                else:
+                    send_message(str(word + ' додано'), chat)
+
+            #loop for removing this repeating elements
+            for repeated in isgoingtoberemoved:
+                text.remove(repeated)
+
+
+            if len(text) != 0:
+                text = ', '.join(text)
+            else:
+                text = ''.join(text)
+            #send_message(present_words_list, chat)
+            if len(present_words_list) == 1 and present_words_list[0] == '':
+                present_words_list = ''.join(present_words_list)
+            else:
+                present_words_list = ', '.join(present_words_list)
+                if text != '':
+                    present_words_list = present_words_list + ', '
+
+            if present_words != '':
+                present_words = present_words + ', '
+            curs.execute("UPDATE users SET keywords ='{}' WHERE telegram_id ='{}' AND name ='{}'".format(str(present_words_list + text), id, name))
             conn.commit()
-            send_message('Ключові слова змінено! Ваш список: ' + str(present_words + ', ' + text), chat)
+            send_message('Ключові слова змінено! Ваш список: ' + str(present_words_list + text), chat)
+        elif text.startswith('/deletekeywords') or text.startswith('видали ключові слова:') or text.startswith('видалити ключові слова:'):
+            if text.startswith('видали ключові слова:') or text.startswith('видалити ключові слова:'):
+                text = text.split(' ')
+                text.pop(0)
+                text.pop(0)
+                text.pop(0)
+            else:
+                text = text.split(' ')
+                text.pop(0)
+            text = remove_bad_characters(text)
+            curs = conn.cursor()
+            curs.execute("SELECT keywords FROM users WHERE telegram_id ='{}' AND name ='{}'".format(id, name))
+            present_words = curs.fetchone()[0]
+            present_words_list = present_words.split(', ')
+            present_words_list = remove_bad_characters(present_words_list)
+
+            #loop for removing chosen elements
+            for should_remove in text:
+                if should_remove in present_words_list:
+                    present_words_list.remove(should_remove)
+                    send_message(str(should_remove + ' вилучено'), chat)
+                else:
+                    send_message(str(should_remove + ' не є твоїм ключовим словом'), chat)
+
+            if len(present_words_list) == 1 and present_words_list[0] == '':
+                present_words_list = ''.join(present_words_list)
+            else:
+                present_words_list = ', '.join(present_words_list)
+
+            curs.execute("UPDATE users SET keywords ='{}' WHERE telegram_id ='{}' AND name ='{}'".format(str(present_words_list), id, name))
+            conn.commit()
+            send_message('Ключові слова змінено! Ваш список: ' + str(present_words_list), chat)
+
+        elif text == '/deleteaccount' or text.startswith('/deleteacc') or text.startswith('видалити аккаунт:'):
+            curs = conn.cursor()
+            curs.execute("DELETE FROM users WHERE telegram_id ='{}' AND name ='{}'".format(id, name))
+            conn.commit()
+
+            text = 'Ти більше не отримуватимеш щоденних розсилок(( Щоб відновити цю можливість напиши мені /start'
+            send_message(text, chat)
         else:
             send_message(text, chat)
 
+def remove_bad_characters(string):
+    string = [s.replace(',', '') for s in string]
+    string = [s.replace(' ', '') for s in string]
+    string = [s.replace(':', '') for s in string]
+    return string
 
 def get_last_chat_id_and_text(updates):
     num_updates = len(updates["result"])
