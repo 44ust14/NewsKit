@@ -158,7 +158,8 @@ def echo_all(updates):
             send_message(text, chat)
         elif text == '/help' or text.startswith('help') or text.startswith('допомога'):
             text = '/start - початок переписки\n /stop - припинити надсилання новин \n /renew - відновити надсилання новин'
-            '\n /keywords - переглянути або додати ключові слова \n /deletekeywords - видалити ключові слова \n /deleteaccount or /deleteacc - видалити аккаунт'
+            '\n /keywords - переглянути або додати ключові слова \n /deletekeywords - видалити ключові слова'
+            '\n /deleteaccount or /deleteacc - видалити аккаунт'
             send_message(text, chat)  
         else:
             send_message(text, chat)

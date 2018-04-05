@@ -1,0 +1,8 @@
+# folder py3env
+py3env/
+
+# file .pylintrc
+.pylintrc
+
+# folder .vscode
+vscode/
