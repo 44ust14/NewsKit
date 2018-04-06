@@ -86,7 +86,11 @@ def echo_all(updates):
                 text.pop(0)
             curs = conn.cursor()
             curs.execute("SELECT keywords FROM users WHERE telegram_id ='{}' AND name ='{}'".format(id, name))
-            present_words = curs.fetchone()[0]
+            try:
+                print('user', telegram_id, name)
+                present_words = curs.fetchone()[0]
+            except TypeError:
+                present_words = ''
             present_words_list = present_words.split(', ')
             present_words_list = remove_bad_characters(present_words_list)
 
