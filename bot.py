@@ -76,7 +76,7 @@ def echo_all(updates):
             send_message('Етап реєстрації пройдений! Ура!', chat)
             #send_message(text, chat)
             send_help(text, chat)
-        elif text.startswith('/keywords') or text.startswith('/add') or text.startswith('/додай') or text.startswith('ключові слова:'):
+        elif text.startswith('/keywords') or text.startswith('/add') or text.startswith('/додай') or text.startswith('ключові слова:') or text.startswith('add') or text.startswith('додай'):
             if text.startswith('ключові слова:'):
                 text = text.split(' ')
                 text.pop(0)
