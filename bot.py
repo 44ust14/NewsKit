@@ -203,8 +203,21 @@ def remove_bad_characters(list):
     list = [s.replace(',', '') for s in list]
     list = [s.replace(' ', '') for s in list]
     list = [s.replace(':', '') for s in list]
+    list = [s.replace(";", '') for s in list]
     list = [s.replace('!', '') for s in list]
     list = [s.replace("'", '') for s in list]
+    list = [s.replace("[", '') for s in list]
+    list = [s.replace("]", '') for s in list]
+    list = [s.replace("{", '') for s in list]
+    list = [s.replace("}", '') for s in list]
+    list = [s.replace("-", '') for s in list]
+    list = [s.replace("_", '') for s in list]
+    list = [s.replace("=", '') for s in list]
+    list = [s.replace("+", '') for s in list]
+    list = [s.replace("|", '') for s in list]
+    list = [s.replace("(", '') for s in list]
+    list = [s.replace(")", '') for s in list]
+    list = [s.replace("*", '') for s in list]
     list = [i for n, i in enumerate(list) if i not in list[n + 1:]] #remove repeating
     print(list)
     return list
