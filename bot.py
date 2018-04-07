@@ -53,13 +53,20 @@ def get_last_update_id(updates):
 
 def echo_all(updates):
     for update in updates["result"]:
-        text = update["message"]["text"]
+        try:
+            text = update["message"]["text"]
+        except KeyError:
+            text = 'На жаль, я не підтримую такий формат повідомлення!'
+    
         text = text.lower()
-
-        chat = update["message"]["chat"]["id"]
-
-        id = update['message']['chat']['id']
-        name =  update['message']['chat']['first_name']
+        
+        try:
+            chat = update["message"]["chat"]["id"]
+            
+            id = update['message']['chat']['id']
+            name =  update['message']['chat']['first_name']
+        except KeyError:
+            break
 
         if text == '/start':
             text = 'Тебе вітає NewsKit!'
@@ -76,7 +83,7 @@ def echo_all(updates):
             send_message('Етап реєстрації пройдений! Ура!', chat)
             #send_message(text, chat)
             send_help(text, chat)
-        elif text.startswith('/keywords') or text.startswith('/add') or text.startswith('/додай') or text.startswith('ключові слова:'):
+        elif text.startswith('/keywords') or text.startswith('/add') or text.startswith('/додай') or text.startswith('ключові слова') or text.startswith('додати') or text.startswith('додай') or text.startswith('add') or text.startswith('слова'):
             if text.startswith('ключові слова:'):
                 text = text.split(' ')
                 text.pop(0)
@@ -87,7 +94,7 @@ def echo_all(updates):
             curs = conn.cursor()
             curs.execute("SELECT keywords FROM users WHERE telegram_id ='{}' AND name ='{}'".format(id, name))
             try:
-                print('user', telegram_id, name)
+                print('user', id, name)
                 present_words = curs.fetchone()[0]
             except TypeError:
                 present_words = ''
@@ -129,7 +136,7 @@ def echo_all(updates):
             curs.execute("UPDATE users SET keywords ='{}' WHERE telegram_id ='{}' AND name ='{}'".format(str(present_words_list + text), id, name))
             conn.commit()
             send_message('Ваш список ключових слів: ' + str(present_words_list + text), chat)
-        elif text.startswith('/deletekeywords') or text.startswith('/remove') or text.startswith('/вилучи') or text.startswith('видали ключові слова:') or text.startswith('видалити ключові слова:'):
+        elif text.startswith('/deletekeywords') or text.startswith('/remove') or text.startswith('видали') or text.startswith('/вилучи') or text.startswith('видали ключові слова') or text.startswith('видалити ключові слова'):
             if text.startswith('видали ключові слова:') or text.startswith('видалити ключові слова:'):
                 text = text.split(' ')
                 text.pop(0)
