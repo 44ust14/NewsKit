@@ -1,2 +1,2 @@
-clock: python app.py
+clock: python parse.py
 web: gunicorn dialogflow:app
