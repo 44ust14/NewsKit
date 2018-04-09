@@ -44,3 +44,4 @@ w3lib==1.19.0
 Werkzeug==0.14.1
 zope.interface==4.4.3
 apiai==1.2.3
+gunicorn==19.7.1

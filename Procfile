@@ -1,2 +1,2 @@
 clock: python app.py
-worker: python bot.py
+web: gunicorn dialogflow:app

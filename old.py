@@ -24,6 +24,32 @@ PORT = int(os.environ.get('PORT', '8443'))
 TelegramBot = telepot.Bot(TOKEN)
 
 
+def get_url(url):
+    response = requests.get(url)
+    content = response.content.decode("utf8")
+    return content
+
+
+def get_json_from_url(url):
+    content = get_url(url)
+    js = json.loads(content)
+    return js
+
+
+def get_updates(offset=None):
+    url = URL + "getUpdates"
+    if offset:
+        url += "?offset={}".format(offset)
+    js = get_json_from_url(url)
+    return js
+
+
+def get_last_update_id(updates):
+    update_ids = []
+    for update in updates["result"]:
+        update_ids.append(int(update["update_id"]))
+    return max(update_ids)
+
 
 def echo_all(updates):
     for update in updates["result"]:
@@ -44,7 +70,6 @@ def echo_all(updates):
 
         if text == '/start':
             text = 'Тебе вітає NewsKit!'
-            # response
             send_message(text, chat)
 
             #text = str([update['message']['chat']['id'], update['message']['chat']['first_name']])
@@ -204,6 +229,18 @@ def remove_bad_characters(list):
     print(list)
     return list
 
+def get_last_chat_id_and_text(updates):
+    num_updates = len(updates["result"])
+    last_update = num_updates - 1
+    text = updates["result"][last_update]["message"]["text"]
+    chat_id = updates["result"][last_update]["message"]["chat"]["id"]
+    return (text, chat_id)
+
+
+def send_message(text, chat_id):
+    text = urllib.parse.quote_plus(text)
+    url = URL + "sendMessage?text={}&chat_id={}".format('(хероку) ' + text, chat_id)
+    get_url(url)
 
 def send_help(text, chat_id):
     text = ' Я - чат-бот, який надсилатиме тобі підбірку свіжих фільтрованих новин у зручний час з обраних новинних веб-сайтів.\n \n <code>Увага! Я поки знаходжусь в розробці і ти користуєшся MVP (найменшою робочою версією), тому поки я підтримую лише 1 новинний сайт. Чекай оновлення зовсім скоро! </code> \n \n Виявлені баги надсилай до <a href="https://www.facebook.com/dmytro.lopushanskyy">Дмитра Лопушанського</a> або <a href="https://www.facebook.com/mlastovski">Марка Ластовського</a> \n \n <b>Алгоритм:</b> 1) Ти пишеш мені свої ключові слова 2) Як тільки з\'являється нова стаття на сайті <a href="http://24tvua.com/">24 Каналу</a>, яка підійде тобі за ключовими словами, то я одразу надішлю в цей чат посилання на неї!  \n \n <i>Список команд боту:</i> \n \n<b>Початок</b> \n  /start - початок переписки \n \n <b>Додавання ключових слів</b> \n /keywords слово1, слово2, слово3 \n /add слово1, слово2, слово3 \n Додай: слово1, слово2, слово3 \n Клочові слова: слово1, слово2, слово3 \n \n <b>Видалення ключових слів</b> \n /deletekeywords слово1, слово2, слово3 \n /remove слово1, слово2, слово3 \n Вилучи: слово1, слово2, слово3 \n Видали клочові слова: слово1, слово2, слово3 \n \n <b>Припинити надсилання новин</b> \n /stop \n стоп \n stop \n \n <b>Відновити надсилання новин</b> \n /renew \n renew \n відновити \n \n  <b>Видалити свій аккаунт в бота</b> \n /deleteacc \n видалити аккаунт' + \
